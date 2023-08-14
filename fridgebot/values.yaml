@@ -1,3 +1,6 @@
+# TODO for each pod: annotations, labels, node selectors
+# TODO for bot: add support for key-as-file config, set credentials as secret volume mount
+
 bot:
   image: docker.repo.corsac.nl/fridge-bot:develop
   pullPolicy: Always
