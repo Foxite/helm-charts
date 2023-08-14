@@ -1,4 +1,4 @@
-{{- if .Values.database_deploy.deploy -}}
+{{- if .Values.database.deploy -}}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
