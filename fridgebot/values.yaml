@@ -1,0 +1,27 @@
+bot:
+  image: docker.repo.corsac.nl/fridge-bot:develop
+  pullPolicy: Always
+  imagePullSecrets: []
+  extraEnv: []
+
+  bot_token: ""
+  error_webhook_url: ""
+
+database_deploy:
+  # Set to false to use your own database.
+  deploy: true
+  image: docker.io/postgres:13.3
+  pullPolicy: Always
+  imagePullSecrets: []
+  extraEnv: []
+  
+  storageClassName: ""
+
+# These database settings are used to configure the bot, as well as the database if you choose to deploy it using this helm chart.
+database:
+  database: fridgebot-data
+  username: fridgebot
+  # Leave empty to generate a password
+  password: ""  
+  host: database
+  port: 5432

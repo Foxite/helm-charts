@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.28.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: bot
+  name: bot
+  namespace: {{ .Release.Namespace }}
+spec:
+  # TODO implement sharding in app, and configure replicas
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: bot
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.28.0 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/fridgebot-fridgebot-network: "true"
+        io.kompose.service: bot
+      namespace: {{ .Release.Namespace }}
+    spec:
+      containers:
+        - args:
+            - --Logging:LogLevel:Microsoft.EntityFrameworkCore=Warning
+          env:
+            - name: FRIDGE_Database__Host
+              valueFrom:
+                configMapKeyRef:
+                  name: database-connection
+                  key: hostname
+            - name: FRIDGE_Database__Database
+              valueFrom:
+                configMapKeyRef:
+                  name: database-connection
+                  key: database
+            - name: FRIDGE_Database__Port
+              valueFrom:
+                configMapKeyRef:
+                  name: database-connection
+                  key: port
+            - name: FRIDGE_Database__Username
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: username
+            - name: FRIDGE_Database__Password
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: password
+            - name: FRIDGE_DiscordNotifications__WebhookUrl
+              valueFrom:
+                secretKeyRef:
+                  name: discord-credentials
+                  key: error_webhook_url
+            - name: FRIDGE_Discord__Token
+              valueFrom:
+                secretKeyRef:
+                  name: discord-credentials
+                  key: bot_token
+            {{- range $val := .Values.bot.extraEnv }}
+            - {{ $val }}
+            {{- end }}
+          image: {{ .Values.bot.image }}
+          imagePullPolicy: {{ .Values.bot.pullPolicy }}
+          name: bot
+          resources: {}
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: regcred
+status: {}

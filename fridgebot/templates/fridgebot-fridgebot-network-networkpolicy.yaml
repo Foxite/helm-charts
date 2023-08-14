@@ -1,0 +1,18 @@
+{{- if .Values.database_deploy.deploy -}}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  creationTimestamp: null
+  name: fridgebot-fridgebot-network
+  namespace: {{ .Release.Namespace }}
+spec:
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              io.kompose.network/fridgebot-fridgebot-network: "true"
+  podSelector:
+    matchLabels:
+      io.kompose.network/fridgebot-fridgebot-network: "true"
+{{- end -}}

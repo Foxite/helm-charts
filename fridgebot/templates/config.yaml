@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: database-connection
+  namespace: {{ .Release.Namespace }}
+data:
+  hostname: {{ .Values.database.host }}
+  port: {{ .Values.database.port | quote }}
+  database: {{ .Values.database.database }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: discord-credentials
+  namespace: {{ .Release.Namespace }}
+data:
+  bot_token: {{ b64enc .Values.bot.bot_token }}
+  error_webhook_url: {{ b64enc .Values.bot.error_webhook_url }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: database-credentials
+  namespace: {{ .Release.Namespace }}
+data:
+  username: {{ b64enc .Values.database.username }}
+  password: {{ b64enc (coalesce .Values.database.password (randAlphaNum 16)) }}

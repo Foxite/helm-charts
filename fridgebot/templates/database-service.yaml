@@ -1,0 +1,23 @@
+{{- if .Values.database_deploy.deploy -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.28.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: database
+  name: {{ .Values.database.host }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: "postgres"
+      port: {{ .Values.database.port }}
+      targetPort: 5432
+  selector:
+    io.kompose.service: database
+status:
+  loadBalancer: {}
+{{- end -}}
